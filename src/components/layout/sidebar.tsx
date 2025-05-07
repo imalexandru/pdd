@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+// import { ChevronRight } from 'lucide-react' // Can be added back for collapsibles if needed
 
 interface DocLink {
   title: string
   href: string
+  disabled?: boolean // Optional: for disabled links
 }
 
 interface DocCategory {
@@ -35,6 +37,7 @@ const docLinks: DocCategory[] = [
       { title: "Planning with AI", href: "/docs/planning-with-ai" },
       { title: "Documentation First", href: "/docs/documentation-first" },
       { title: "Feature Development", href: "/docs/feature-development" },
+      { title: "Advanced Techniques", href: "/docs/advanced-techniques", disabled: true }, // Example disabled link
     ]
   }
 ]
@@ -43,31 +46,39 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="w-full">
-      <div className="space-y-6">
-        {docLinks.map((category) => (
-          <div key={category.title} className="pb-4">
-            <h4 className="mb-1 rounded-md px-2 py-1 text-sm font-semibold">
+    <div className="w-full h-full overflow-y-auto">
+      <nav className="space-y-6 pr-2">
+        {docLinks.map((category, categoryIdx) => (
+          <div key={category.title + categoryIdx}>
+            <h4 className="mb-2 text-sm font-semibold text-foreground/90 tracking-tight">
               {category.title}
             </h4>
-            {category.items.map((item) => (
-              <div key={item.href} className="mt-1">
+            <div className="space-y-1">
+              {category.items.map((item, itemIdx) => (
                 <Link
-                  href={item.href}
+                  key={item.href + itemIdx}
+                  href={item.disabled ? '#' : item.href}
                   className={cn(
-                    "block rounded-md px-2 py-1 text-sm hover:bg-accent hover:text-accent-foreground",
-                    pathname === item.href
-                      ? "font-medium text-primary"
-                      : "text-muted-foreground"
+                    "group flex items-center rounded-md px-3 py-2 text-sm transition-colors",
+                    item.disabled
+                      ? "cursor-not-allowed text-muted-foreground/50"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    pathname === item.href && !item.disabled
+                      ? "bg-accent font-medium text-accent-foreground"
+                      : ""
                   )}
+                  aria-disabled={item.disabled}
+                  tabIndex={item.disabled ? -1 : undefined}
                 >
+                  {/* Optional: Add an icon here if desired, e.g., based on link type */}
                   {item.title}
+                  {item.disabled && <span className="ml-auto text-xs text-muted-foreground/70">(Coming soon)</span>}
                 </Link>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
-      </div>
+      </nav>
     </div>
   )
 } 
