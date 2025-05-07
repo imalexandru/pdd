@@ -14,24 +14,26 @@ export function MainLayout({ children }: MainLayoutProps) {
   const isDocsPage = pathname?.startsWith('/docs')
 
   return (
-    <div className="min-h-screen bg-background font-sans antialiased">
+    <div className="relative min-h-screen flex flex-col">
       <TopNav />
-      <div className="container mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row relative">
-          {isDocsPage && (
-            <aside className="fixed top-14 z-30 -ml-4 md:ml-0 w-[280px] shrink-0 border-r border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:sticky md:block transition-transform duration-300 ease-in-out">
-              <div className="h-[calc(100vh-3.5rem)] overflow-y-auto py-6 pr-4 pl-4 md:pl-0">
-                <Sidebar />
+      <div className="flex-1">
+        <div className="border-b">
+          <div className="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+            {isDocsPage && (
+              <aside className="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
+                <div className="h-full py-6 pl-8 pr-6 lg:py-8">
+                  <Sidebar />
+                </div>
+              </aside>
+            )}
+            <main className="relative py-6 lg:gap-10 lg:py-8 xl:grid">
+              <div className="mx-auto w-full min-w-0">
+                <div className="pb-12 pt-1">
+                  {children}
+                </div>
               </div>
-            </aside>
-          )}
-          <main className={cn(
-            "flex-1 py-6 transition-all duration-300 ease-in-out",
-            isDocsPage ? "md:pl-8" : "",
-            "prose dark:prose-invert max-w-none"
-          )}>
-            {children}
-          </main>
+            </main>
+          </div>
         </div>
       </div>
     </div>
